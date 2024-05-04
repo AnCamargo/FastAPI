@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from .. import models, schema
+from .. import models, schema, oauth2
 from typing import List
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -11,7 +11,8 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schema.Post])
-async def get_posts(db: Session = Depends(get_db)):
+def get_posts(current_user: int = Depends(oauth2.get_current_user)
+                    , db: Session = Depends(get_db)):
     # with connection_pool.getconn() as connection:
     #     with connection.cursor() as  cursor:
     #         cursor.execute("SELECT * FROM posts")
@@ -22,12 +23,14 @@ async def get_posts(db: Session = Depends(get_db)):
     return posts
 
 @router.get("/latest")
-def get_latest_post(db: Session = Depends(get_db), response_model=schema.Post):
+def get_latest_post(db: Session = Depends(get_db),  current_user: int = Depends(oauth2.get_current_user)
+                    ,response_model=schema.Post):
     last_post = db.query(models.Post).order_by(models.Post.id.desc()).first()
     return last_post
 
 @router.get("/{post_id}")
-def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
+def get_post_by_id(post_id: int, current_user: int = Depends(oauth2.get_current_user)
+                   , db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -35,7 +38,8 @@ def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
     return post
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.Post)
-def create_post(post: schema.PostCreate, db: Session = Depends(get_db)):
+def create_post(post: schema.PostCreate, current_user: int = Depends(oauth2.get_current_user)
+                , db: Session = Depends(get_db)):
     #**post.model_dump() entrega algo de esta forma title=post.title, content=post.content, published=post.published con todos los valores de la clase Post de pydantic
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
@@ -44,7 +48,8 @@ def create_post(post: schema.PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(post_id: int, db: Session = Depends(get_db)):
+def delete_post(post_id: int,  current_user: int = Depends(oauth2.get_current_user)
+                , db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == post_id)
     if post_query.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -54,7 +59,8 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.put("/{post_id}", response_model=schema.Post)
-def update_post(post_id: int, post: schema.PostCreate, db: Session = Depends(get_db)):
+def update_post(post_id: int, post: schema.PostCreate,  current_user: int = Depends(oauth2.get_current_user)
+                , db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == post_id)
     if post_query.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

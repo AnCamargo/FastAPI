@@ -42,3 +42,13 @@ class UserCreateResponse(BaseModel):
     id: int
     email: EmailStr
     created_at: datetime
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+
+class TokenData(BaseModel):
+    id: Optional[int] = None
