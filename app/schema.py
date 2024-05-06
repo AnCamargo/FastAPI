@@ -11,9 +11,16 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
+class UserCreateResponse(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+
 class Post(PostBase):
     id: int
+    user_id: int
     created_at: datetime
+    user: UserCreateResponse
     #pydantic.v1 -> In Response clasess, the class should have this:
     # class Config:
     #     orm_mode = True
@@ -37,11 +44,6 @@ class UserCreate(BaseModel):
             raise ValueError('password should have at least one symbol: *?¿\\/|-_+(¨~`^)·:;.,')
         else:
             return pwd
-        
-class UserCreateResponse(BaseModel):
-    id: int
-    email: EmailStr
-    created_at: datetime
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -52,3 +54,14 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int] = None
+
+class VoteReq(BaseModel):
+    post_id: int
+    vote_dir: int
+
+    @field_validator('vote_dir')
+    @classmethod
+    def vote_dir_validate(cls, vote_dir: int) -> int:
+        if vote_dir < -1 or vote_dir > 1:
+            raise ValueError('vote_dir should be in (-1, 0, 1) values')
+        return vote_dir
