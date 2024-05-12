@@ -1,0 +1,33 @@
+services:
+  api:
+    build: .
+    depends_on:
+      - postgres
+    ports: 
+      - 80:8000
+    volumes:
+      - ./:/usr/src/app:ro
+    #command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    # env_file:
+    #   - ./.env
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PW=${DB_PW}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - TOKEN_MINS_EXPIRE=${TOKEN_MINS_EXPIRE}
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=${DB_PW}
+      - POSTGRES_DB=${DB_NAME}
+
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+volumes:
+  postgres-db:
