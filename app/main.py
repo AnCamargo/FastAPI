@@ -25,4 +25,4 @@ app.include_router(vote.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello this is the main page"}
+    return {"message": "Hello, this is the root page"}
