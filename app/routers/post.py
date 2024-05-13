@@ -50,13 +50,13 @@ def get_post_by_id(post_id: int, current_user: dict = Depends(oauth2.get_current
     results = db.query(models.Post, func.count(models.Votes.post_id).label("Votes")).join(
         models.Votes, models.Votes.post_id == models.Post.id, isouter=True).group_by(
                      models.Post.id).filter(models.Post.user_id == current_user.id,
-                         models.Post.id == post_id)
+                         models.Post.id == post_id).first()
     #post = db.query(models.Post).filter(models.Post.id == post_id).first()
     
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id {post_id} does not exist")
-    return results.first()
+    return results
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.Post)
 def create_post(post: schema.PostCreate, current_user: dict = Depends(oauth2.get_current_user)
