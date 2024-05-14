@@ -90,7 +90,7 @@ jobs:
       name: Production
     steps:
       - name: Deploy to Ubuntu Server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{secrets.PROD_HOST}}
           username: ${{secrets.PROD_USERNAME}}
