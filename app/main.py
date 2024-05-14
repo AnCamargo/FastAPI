@@ -25,4 +25,4 @@ app.include_router(vote.router)
 
 @app.get("/", status_code=status.HTTP_200_OK)
 def root():
-    return {"message": "Hello, this is the root page, and it was deployed with CI/CD with GitHub actions."}
+    return {"message": "!Hello¡, this is the root page, and it was deployed with CI/CD with GitHub actions."}
