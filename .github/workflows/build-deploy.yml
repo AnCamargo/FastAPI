@@ -8,7 +8,7 @@ on: [push, pull_request]
   #   branches: 
   #     - "dev"
 jobs:
-  FirstJob:
+  Build:
     environment:
       name: Testing
     runs-on: ubuntu-latest
@@ -83,3 +83,19 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache  
       
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: [Build]
+    environment:
+      name: Production
+    steps:
+      - name: Deploy to Ubuntu Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.PROD_HOST}}
+          username: ${{secrets.PROD_USERNAME}}
+          password: ${{secrets.PROD_PASSWORD}}
+          script: |
+            cd app/src
+            git pull
+            echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
