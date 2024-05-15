@@ -95,7 +95,7 @@ jobs:
           host: ${{secrets.PROD_HOST}}
           username: ${{secrets.PROD_USERNAME}}
           key: ${{secrets.PROD_KEY}}
-          password: ${{secrets.PROD_PASSWORD}}
+          #password: ${{secrets.PROD_PASSWORD}}
           port: 22 #${{secrets.PROD_PORT}}
           script: |
             echo "Good job"
