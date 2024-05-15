@@ -90,14 +90,13 @@ jobs:
       name: Production
     steps:
       - name: Deploy to Ubuntu Server
-        uses: garygrossgarten/github-action-ssh@release ##appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          command: echo "Good job"
           host: ${{secrets.PROD_HOST}}
           username: ${{secrets.PROD_USERNAME}}
           password: ${{secrets.PROD_PASSWORD}}
           port: ${{secrets.PROD_PORT}}
-          #script: 
+          script: echo "Good job"
             # |
             # cd app/src
             # git pull
