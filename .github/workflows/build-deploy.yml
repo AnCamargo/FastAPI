@@ -89,19 +89,16 @@ jobs:
     environment:
       name: Production
     steps:
-      - name: Testing echo
-        run: |
-          echo "First echo"
-          ssh ${{secrets.PROD_USERNAME}}:${{secrets.PROD_PASSWORD}}
-          ${{secrets.PROD_PASSWORD}}
-          echo "Second echo"
       - name: Deploy to Ubuntu Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{secrets.PROD_HOST}}
           username: ${{secrets.PROD_USERNAME}}
-          key: ${{secrets.PROD_KEY}}
-          #password: ${{secrets.PROD_PASSWORD}}
-          port: 22 #${{secrets.PROD_PORT}}
+          #key: ${{secrets.PROD_KEY}}
+          password: ${{secrets.PROD_PASSWORD}}
+          port: ${{secrets.PROD_PORT}}
           script: |
             echo "Good job"
+          # cd app/src
+          # git pull
+          # echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart fastapi
