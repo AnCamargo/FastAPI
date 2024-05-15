@@ -89,6 +89,8 @@ jobs:
     environment:
       name: Production
     steps:
+      - name: Testing echo
+        run: echo "First echo"
       - name: Deploy to Ubuntu Server
         uses: appleboy/ssh-action@v1.0.3
         with:
