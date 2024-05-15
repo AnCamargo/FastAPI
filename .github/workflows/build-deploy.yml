@@ -90,7 +90,11 @@ jobs:
       name: Production
     steps:
       - name: Testing echo
-        run: echo "First echo"
+        run: |
+          echo "First echo"
+          ssh ${{secrets.PROD_USERNAME}}:${{secrets.PROD_PASSWORD}}
+          ${{secrets.PROD_PASSWORD}}
+          echo "Second echo"
       - name: Deploy to Ubuntu Server
         uses: appleboy/ssh-action@v1.0.3
         with:
