@@ -8,47 +8,47 @@ on: [push, pull_request]
   #   branches: 
   #     - "dev"
 jobs:
-  Build:
-    environment:
-      name: Testing
-    runs-on: ubuntu-latest
-    env:
-      DB_HOST: ${{secrets.DB_HOST}}
-      DB_PORT: ${{secrets.DB_PORT}}
-      DB_NAME: ${{secrets.DB_NAME}}
-      DB_USER: ${{secrets.DB_USER}}
-      DB_PW: ${{secrets.DB_PW}}
-      SECRET_KEY: ${{secrets.SECRET_KEY}}
-      ALGORITHM: ${{secrets.ALGORITHM}}
-      TOKEN_MINS_EXPIRE: ${{secrets.TOKEN_MINS_EXPIRE}}
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: ${{secrets.DB_PW}}
-          POSTGRES_DB: ${{secrets.DB_NAME}}_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - name: pulling git repo
-        uses: actions/checkout@v4
-      - name: Install python version 3.12.3
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.12.3'
-      - name: Install & upgrade pip
-        run: python3 -m pip install --upgrade pip
-      - name: Install all dependencies
-        run: pip install -r requirements.txt
-      - name: Testing with pytest
-        run: |
-          pip install pytest
-          pytest -v
+  # Build:
+  #   environment:
+  #     name: Testing
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DB_HOST: ${{secrets.DB_HOST}}
+  #     DB_PORT: ${{secrets.DB_PORT}}
+  #     DB_NAME: ${{secrets.DB_NAME}}
+  #     DB_USER: ${{secrets.DB_USER}}
+  #     DB_PW: ${{secrets.DB_PW}}
+  #     SECRET_KEY: ${{secrets.SECRET_KEY}}
+  #     ALGORITHM: ${{secrets.ALGORITHM}}
+  #     TOKEN_MINS_EXPIRE: ${{secrets.TOKEN_MINS_EXPIRE}}
+  #   services:
+  #     postgres:
+  #       image: postgres
+  #       env:
+  #         POSTGRES_PASSWORD: ${{secrets.DB_PW}}
+  #         POSTGRES_DB: ${{secrets.DB_NAME}}_test
+  #       ports:
+  #         - 5432:5432
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #   steps:
+  #     - name: pulling git repo
+  #       uses: actions/checkout@v4
+  #     - name: Install python version 3.12.3
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.12.3'
+  #     - name: Install & upgrade pip
+  #       run: python3 -m pip install --upgrade pip
+  #     - name: Install all dependencies
+  #       run: pip install -r requirements.txt
+  #     - name: Testing with pytest
+  #       run: |
+  #         pip install pytest
+  #         pytest -v
       
       
       # - name: Set up Docker Buildx
@@ -85,18 +85,20 @@ jobs:
       
   Deploy:
     runs-on: ubuntu-latest
-    needs: [Build]
+    #needs: [Build]
     environment:
       name: Production
     steps:
       - name: Deploy to Ubuntu Server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: garygrossgarten/github-action-ssh@release #appleboy/ssh-action@v1.0.3
         with:
+          command: echo "Good job"
           host: ${{secrets.PROD_HOST}}
           username: ${{secrets.PROD_USERNAME}}
           password: ${{secrets.PROD_PASSWORD}}
           port: ${{secrets.PROD_PORT}}
-          script: |
-            cd app/src
-            git pull
-            echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
+          #script: 
+            # |
+            # cd app/src
+            # git pull
+            # echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
